@@ -30,6 +30,31 @@ INSERT INTO stations (SELECT ... FROM tripe);
 
 Hint 2: You don't have to do it all in one query
 
+
+ANSWER:
+``` sql
+// Adds stations with ID !== null and station name is unique
+INSERT INTO stations (id, name)
+SELECT  from_station_id as id, (array_agg(distinct from_station_name))[1]  as name
+from trips 
+
+WHERE from_station_id IS NOT NULL group by from_station_id HAVING COUNT(distinct from_station_name) = 1 
+
+ORDER BY id ASC;
+
+// Adds stations with ID !== null and station name is one of 2 types
+```
+
+INSERT INTO stations (id, name)
+SELECT  from_station_id as id, (array_agg(distinct from_station_name))[1]  as name
+from trips 
+
+WHERE from_station_id IS NOT NULL group by from_station_id HAVING COUNT(distinct from_station_name) > 1 
+
+ORDER BY id ASC;
+
+// Adds stations with ID of null
+
 2) Should we add any indexes to the stations table, why or why not?
 
 3) Fill in the missing data in the `trips` table based on the work you did above
